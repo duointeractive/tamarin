@@ -14,4 +14,3 @@ def pull_and_parse_logs():
             log_contents = key.get_contents_as_string()
             parser = S3LogParser(log_contents)
             parser.parse_and_store()
-            break
