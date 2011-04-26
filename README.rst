@@ -1,26 +1,30 @@
-media-nommer
-============
+Tamarin
+=======
 
-media-nommer is a Python-based media encoding system, using Amazon AWS
-as its backbone. 
+Tamarin is a Django app used for parsing storing S3 bucket log data in local
+models. Said data can be used for monitoring:
+
+* Resource usage for each bucket
+* Which hosts are consuming the most buckets
+* Which files are being downloaded most frequently
+
+Tamarin's only purpose is to retrieve the logs from S3, parse them, and store
+them locally in a Django model. You'll need to write your own queries and
+reports, or use another third party app that builds on Tamarin.  
 
 Status
 ------
 
-media-nommer is currently usable, but in development. At this time, the
-software is probably only appropriate for those with a strong grasp on
-Python.
+Tamarin is not recommended for production use... yet.
   
 Documentation
 -------------
 
-Documentation may be found on the media-nommer `website`_.
-
-.. _website: http://duointeractive.github.com/media-nommer/
+Docstring only at this point.
   
 License
 -------
 
 media-nommer is licensed under the `BSD License`_.
 
-.. _BSD License: https://github.com/duointeractive/media-nommer/blob/master/LICENSE
+.. _BSD License: https://github.com/duointeractive/tamarin/blob/master/LICENSE
