@@ -166,7 +166,9 @@ class S3LogParser(object):
     def parse_and_store(self):
         lines = self.log_contents.split('\n')
         for line in lines:
-            if not line:
+            # XXX: Don't limit to REST.GET.OBJECT. Requires some
+            # PyParsing magic that I don't understand yet.
+            if not line or "REST.GET.OBJECT" not in line:
                 continue
             line_parser = S3LogLineParser(line)
             line_parser.parse_and_store()
