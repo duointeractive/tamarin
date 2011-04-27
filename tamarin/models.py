@@ -80,7 +80,7 @@ class S3LogRecord(models.Model):
                   "protocol overhead, or '-' if zero.")
     object_size = models.PositiveIntegerField(blank=True, null=True,
         help_text="The total size of the object in question.")
-    total_time = models.PositiveIntegerField(
+    total_time = models.PositiveIntegerField(blank=True, null=True,
         help_text="The number of milliseconds the request was in flight "\
                   "from the server's perspective. This value is measured "\
                   "from the time your request is received to the time that "\
@@ -111,6 +111,7 @@ class S3LogRecord(models.Model):
         'referrer',
         'object_size',
         'version_id',
+        'user_agent',
     ]
 
     # The following fields (by string name) have dash values replaced with
@@ -119,6 +120,7 @@ class S3LogRecord(models.Model):
         'turnaround_time',
         'object_size',
         'bytes_sent',
+        'total_time',
     ]
 
     def save(self):

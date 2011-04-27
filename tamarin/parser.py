@@ -3,7 +3,7 @@ Log file parser.
 """
 import datetime
 import string
-from pyparsing import alphas, nums, dblQuotedString, Combine, Word, Group, delimitedList, Suppress, removeQuotes
+from pyparsing import alphas, nums, alphanums, dblQuotedString, Combine, Word, Group, delimitedList, Suppress, removeQuotes
 from tamarin.models import S3LogRecord, S3LoggedBucket
 
 class S3LogLineParser(object):
@@ -82,36 +82,44 @@ class S3LogLineParser(object):
 
         operation = Word(alphas + "." + "_")
 
-        key = Word(alphas + nums + "/" + "-" + "_" + "." + "?" + "="
-                   + "%" + "&")
+        key = Word(alphanums + "/-_.?=%&:")
 
         http_method = Word(string.uppercase)
 
         http_protocol = Word(alphas + nums + "/" + ".")
 
+        uri = Suppress('"') + \
+              http_method('request_method') + \
+              key("request_uri") + \
+              http_protocol('http_version') + \
+              Suppress('"')
+        dash_or_uri = ("-" | uri)
+
+        referrer_uri = Suppress('"') + key + Suppress('"')
+        referrer_or_dash = referrer_uri | "-"
+
+        user_agent = Suppress('"') + Word(alphanums + "/-_.?=%&:(); ,") + Suppress('"')
+        user_agent_or_dash = user_agent | "-"
+
         log_line_bnf = (
-            generic_alphanum.setResultsName("bucket_owner") +
-            bucket_str.setResultsName("bucket") +
-            serverDateTime.setResultsName("request_dtime").setParseAction(self._action_dtime_parse) +
-            ip_address.setResultsName("remote_ip") +
-            requester.setResultsName("requester") +
-            generic_alphanum.setResultsName("request_id") +
-            operation.setResultsName("operation") +
-            key.setResultsName("key") +
-            Suppress("\"") +
-            http_method.setResultsName("request_method") +
-            key.setResultsName("request_uri") +
-            http_protocol.setResultsName("http_version") +
-            Suppress("\"") +
-            integer.setResultsName('http_status') +
-            alpha_or_dash.setResultsName('error_code') +
-            num_or_dash.setResultsName('bytes_sent') +
-            num_or_dash.setResultsName('object_size') +
-            integer.setResultsName('total_time') +
-            num_or_dash.setResultsName('turnaround_time') +
-            dblQuotedString.setResultsName('referrer').setParseAction(removeQuotes) +
-            dblQuotedString.setResultsName('user_agent').setParseAction(removeQuotes) +
-            alpha_or_dash.setResultsName('version_id')
+            generic_alphanum("bucket_owner") +
+            bucket_str("bucket") +
+            serverDateTime("request_dtime").setParseAction(self._action_dtime_parse) +
+            ip_address("remote_ip") +
+            requester("requester") +
+            generic_alphanum("request_id") +
+            operation("operation") +
+            key("key") +
+            dash_or_uri("request_uri") +
+            integer('http_status') +
+            alpha_or_dash('error_code') +
+            num_or_dash('bytes_sent') +
+            num_or_dash('object_size') +
+            num_or_dash('total_time') +
+            num_or_dash('turnaround_time') +
+            referrer_or_dash('referrer') +
+            user_agent_or_dash('user_agent') +
+            alpha_or_dash('version_id')
         )
         return log_line_bnf.parseString(self.line_contents)
 
@@ -124,16 +132,16 @@ class S3LogLineParser(object):
         print "request_id:", parsed['request_id']
         print "operation:", parsed['operation']
         print "key:", parsed['key']
-        print "request_method:", parsed['request_method']
-        print "request_uri:", parsed['request_uri']
-        print "http_version:", parsed['http_version']
+        print "request_method:", parsed.get('request_method', '')
+        print "request_uri:", parsed.get('request_uri', '')
+        print "http_version:", parsed.get('http_version', '')
         print "http_status:", parsed['http_status']
         print "error_code:", parsed['error_code']
         print "bytes_sent:", parsed['bytes_sent']
         print "object_size:", parsed['object_size']
         print "total_time:", parsed['total_time']
         print "turnaround_time:", parsed['turnaround_time']
-        print "referrer:", parsed['referrer']
+        print "referrer:", parsed.get('referrer')
         print "user_agent:", parsed['user_agent']
         print "version_id:", parsed['version_id']
 
@@ -147,7 +155,7 @@ class S3LogLineParser(object):
         fields = [field.name for field in record._meta.fields \
                     if field.name not in manual_fields]
         for field in fields:
-            setattr(record, field, parsed[field])
+            setattr(record, field, parsed.get(field))
 
         record.bucket = S3LoggedBucket.objects.get(name=parsed['bucket'])
 
@@ -168,7 +176,9 @@ class S3LogParser(object):
         for line in lines:
             # XXX: Don't limit to REST.GET.OBJECT. Requires some
             # PyParsing magic that I don't understand yet.
-            if not line or "REST.GET.OBJECT" not in line:
+            #if "REST.GET.OBJECT" not in line:
+            #    continue
+            if not line:
                 continue
             line_parser = S3LogLineParser(line)
             line_parser.parse_and_store()
