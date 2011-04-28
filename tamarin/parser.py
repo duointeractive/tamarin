@@ -53,11 +53,11 @@ class S3LogLineParser(object):
             name of the key on the ParseResults object.
         """
         integer = Word(nums)
-        generic_alphanum = Word(alphas + nums)
+        generic_alphanum = Word(alphanums)
         alpha_or_dash = Word(alphas + "-")
         num_or_dash = Word(nums + '-')
 
-        bucket_str = Word(alphas + nums + '-' + '_')
+        bucket_str = Word(alphanums + '-_')
 
         time_zone_offset = Word("+-", nums)
 
@@ -78,15 +78,15 @@ class S3LogLineParser(object):
 
         ip_address = delimitedList(integer, ".", combine=True)
 
-        requester = Word(alphas + nums + "-")
+        requester = Word(alphanums + "-")
 
-        operation = Word(alphas + "." + "_")
+        operation = Word(alphas + "._")
 
-        key = Word(alphanums + "/-_.?=%&:")
+        key = Word(alphanums + "/-_.?=%&:+<>#~[]")
 
         http_method = Word(string.uppercase)
 
-        http_protocol = Word(alphas + nums + "/" + ".")
+        http_protocol = Word(alphanums + "/.")
 
         uri = Suppress('"') + \
               http_method('request_method') + \
@@ -96,9 +96,11 @@ class S3LogLineParser(object):
         dash_or_uri = ("-" | uri)
 
         referrer_uri = Suppress('"') + key + Suppress('"')
-        referrer_or_dash = referrer_uri | "-"
+        empty_dquotes = Suppress('"') + Suppress('"')
+        referrer_or_dash = referrer_uri | "-" | empty_dquotes
 
-        user_agent = Suppress('"') + Word(alphanums + "/-_.?=%&:(); ,") + Suppress('"')
+        user_agent = Suppress('"') + Word(alphanums + "/-_.?=%&:(); ,+$@!^<>~[]'{}*") + Suppress('"')
+
         user_agent_or_dash = user_agent | "-"
 
         log_line_bnf = (

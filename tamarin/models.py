@@ -49,7 +49,7 @@ class S3LogRecord(models.Model):
         help_text="The apparent Internet address of the requester. "\
                   "Intermediate proxies and firewalls might obscure the "\
                   "actual address of the machine making the request.")
-    requester = models.CharField(max_length=255, blank=True,
+    requester = models.CharField(max_length=255, blank=True, null=True,
         help_text="The canonical user id of the requester, or the string "\
                   "'Anonymous' for unauthenticated requests. This "\
                   "identifier is the same one used for access control "\
@@ -63,17 +63,17 @@ class S3LogRecord(models.Model):
     key = models.TextField(
         help_text="The 'key' part of the request, URL encoded, or '-' if "\
                   "the operation does not take a key parameter.")
-    request_method = models.CharField(max_length=10,
+    request_method = models.CharField(max_length=10, blank=True, null=True,
         help_text="The method used to retrieve the file. Typically either "\
                   "GET or POST.")
     request_uri = models.TextField(
         help_text="The Request-URI part of the HTTP request message.")
-    http_version = models.CharField(max_length=15,
+    http_version = models.CharField(max_length=15, blank=True, null=True,
         help_text="HTTP version used in the request. Typically HTTP/1.0 "\
                   "or HTTP/1.1.")
     http_status = models.PositiveIntegerField(
         help_text="The HTTP response code for the request.")
-    error_code = models.CharField(max_length=255, blank=True,
+    error_code = models.CharField(max_length=255, blank=True, null=True,
         help_text="The Amazon S3 Error Code, or '-' if no error occurred.")
     bytes_sent = models.PositiveIntegerField(blank=True, null=True,
         help_text="The number of response bytes sent, excluding HTTP "\
@@ -92,52 +92,41 @@ class S3LogRecord(models.Model):
                   "processing your request. This value is measured from "\
                   "the time the last byte of your request was received until "\
                   "the time the first byte of the response was sent.")
-    referrer = models.TextField(blank=True,
+    referrer = models.TextField(blank=True, null=True,
         help_text="The value of the HTTP Referrer header, if present. "\
                   "HTTP user-agents (e.g. browsers) typically set this "\
                   "header to the URL of the linking or embedding page when "\
                   "making a request.")
-    user_agent = models.TextField(
+    user_agent = models.TextField(blank=True, null=True,
         help_text="The value of the HTTP User-Agent header.")
-    version_id = models.CharField(max_length=255, blank=True,
+    version_id = models.CharField(max_length=255, blank=True, null=True,
         help_text="The version ID in the request, or '-' if the operation "\
                   "does not take a versionId parameter.")
 
     # The following fields (by string name) have dash values replaced with
-    # empty strings so we don't have to query by '-'.
-    DASHED_TO_EMPTY_FIELDS = [
+    # None values so we don't have to query by '-'.
+    DASHED_TO_NONE_FIELDS = [
         'requester',
         'error_code',
         'referrer',
         'object_size',
         'version_id',
         'user_agent',
-    ]
-
-    # The following fields (by string name) have dash values replaced with
-    # None values so we don't have to query by '-'.
-    DASHED_TO_NONE_FIELDS = [
         'turnaround_time',
         'object_size',
         'bytes_sent',
         'total_time',
+        'user_agent',
     ]
 
     def save(self):
         """
-        Look through the dash-to-empty fields, replace dashes with an 
-        empty string or None value to promote less silly query filters.
+        Look through the dash-to-empty fields, replace dashes with a 
+        None value to promote less silly query filters.
         """
-        for field in self.DASHED_TO_EMPTY_FIELDS:
-            field_val = getattr(self, field)
-            if field_val == '-':
-                setattr(self, field, '')
-
         for field in self.DASHED_TO_NONE_FIELDS:
             field_val = getattr(self, field)
-            try:
-                int(field_val)
-            except ValueError:
+            if field_val == '-' or field_val == '':
                 setattr(self, field, None)
 
         super(S3LogRecord, self).save()
