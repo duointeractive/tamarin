@@ -1,3 +1,6 @@
+"""
+ModelAdmin classes for the tamarin package.
+"""
 from django.contrib import admin
 from tamarin.models import S3LoggedBucket, S3LogRecord
 
@@ -24,6 +27,13 @@ class S3LogRecordAdmin(admin.ModelAdmin):
     ordering = ['-request_dtime']
 
     def admin_bucket_name(self, obj):
+        """
+        Returns the name of the log's monitored bucket.
+        
+        :param S3LogRecord obj: The object whose bucket name to retrieve.
+        :rtype: str
+        :returns: The name of the bucket being monitored in this log.
+        """
         return obj.bucket.name
 
 admin.site.register(S3LogRecord, S3LogRecordAdmin)
