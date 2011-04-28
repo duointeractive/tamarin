@@ -1,17 +1,28 @@
 """
 Log file parser. 
 """
+import logging
 import datetime
 from dateutil import zoneinfo
 import string
 from pyparsing import alphas, nums, alphanums, dblQuotedString, Combine, Word, Group, delimitedList, Suppress, removeQuotes
 from django.conf import settings
 
+logger = logging.getLogger(__name__)
+
 class S3LogLineParser(object):
     """
     Parses individual lines within an S3 bucket log. Spits out 
     S3LogRecord objects.
     """
+    FIELDS = (
+        'bucket', 'request_dtime', 'remote_ip', 'requester',
+        'request_id', 'operation', 'key', 'request_method',
+        'request_uri', 'http_version', 'http_status', 'error_code',
+        'bytes_sent', 'object_size', 'total_time', 'turnaround_time',
+        'referrer', 'user_agent', 'version_id',
+    )
+
     def __init__(self, line_contents):
         """
         :param str line_contents: The individual line/log entry to parse.
@@ -19,11 +30,11 @@ class S3LogLineParser(object):
         self.line_contents = line_contents
 
     def parse_line(self):
-        print "-- RAW --" * 5
-        print(self.line_contents)
-        print "-- RESULTS --" * 5
+        logger.debug("-- RAW --" * 5)
+        logger.debug(self.line_contents)
+        logger.debug("-- RESULTS --" * 5)
         results = self.parse()
-        self._test_print(results)
+        logger.debug(self._parse_result_debug_msg(results))
         return results
 
     def _action_dtime_parse(self, full_str, length, t):
@@ -136,27 +147,11 @@ class S3LogLineParser(object):
         )
         return log_line_bnf.parseString(self.line_contents)
 
-    def _test_print(self, parsed):
-        print "bucket_owner:", parsed['bucket_owner']
-        print "bucket:", parsed['bucket']
-        print "request_dtime:", parsed['request_dtime']
-        print "remote_ip:", parsed['remote_ip']
-        print "requester:", parsed['requester']
-        print "request_id:", parsed['request_id']
-        print "operation:", parsed['operation']
-        print "key:", parsed['key']
-        print "request_method:", parsed.get('request_method', '')
-        print "request_uri:", parsed.get('request_uri', '')
-        print "http_version:", parsed.get('http_version', '')
-        print "http_status:", parsed['http_status']
-        print "error_code:", parsed['error_code']
-        print "bytes_sent:", parsed['bytes_sent']
-        print "object_size:", parsed['object_size']
-        print "total_time:", parsed['total_time']
-        print "turnaround_time:", parsed['turnaround_time']
-        print "referrer:", parsed.get('referrer')
-        print "user_agent:", parsed['user_agent']
-        print "version_id:", parsed['version_id']
+    def _parse_result_debug_msg(self, parsed):
+        retval = ""
+        for field in self.FIELDS:
+            retval += "%s: %s\n" % (field, parsed.get(field, ''))
+        return retval
 
 class S3LogParser(object):
     """
