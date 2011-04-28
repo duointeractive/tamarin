@@ -2,9 +2,11 @@
 Log file parser. 
 """
 import datetime
+from dateutil import zoneinfo
 import string
 from pyparsing import alphas, nums, alphanums, dblQuotedString, Combine, Word, Group, delimitedList, Suppress, removeQuotes
 from tamarin.models import S3LogRecord, S3LoggedBucket
+from django.conf import settings
 
 class S3LogLineParser(object):
     """
@@ -34,14 +36,25 @@ class S3LogLineParser(object):
         :param int length: The length of the text to parse.
         :param list t: The grouped string to parse.
         :rtype: datetime.datetime
-        :returns: The datetime.datetime equivalent of the time string.
+        :returns: The datetime.datetime equivalent of the time string with
+            the correct (settings.TIME_ZONE) timezone set.
         """
         # Comes in as [['22/Apr/2011:18:28:10', '+000']] but we're just
         # interested in the time, since strptime with a %z formatter doesn't
         # work as expected on all platforms.
         dtime_str = t[0][0]
         # 22/Apr/2011:18:28:10
-        return datetime.datetime.strptime(dtime_str, "%d/%b/%Y:%H:%M:%S")
+        utc = datetime.datetime.strptime(dtime_str, "%d/%b/%Y:%H:%M:%S")
+        # The parsed time is in UTC. Make it "aware".
+        utc = utc.replace(tzinfo=zoneinfo.gettz('UTC'))
+        if settings.TIME_ZONE != 'UTC':
+            # Get the user's local timezone.
+            to_zone = zoneinfo.gettz(settings.TIME_ZONE)
+            # Set the timezone to the configured TZ.
+            return utc.astimezone(to_zone)
+        else:
+            # Already UTC, don't budge.
+            return utc
 
     def parse(self):
         """
