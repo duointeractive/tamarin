@@ -99,7 +99,7 @@ class S3LogLineParser(object):
         empty_dquotes = Suppress('"') + Suppress('"')
         referrer_or_dash = referrer_uri | "-" | empty_dquotes
 
-        user_agent = Suppress('"') + Word(alphanums + "/-_.?=%&:(); ,+$@!^<>~[]'{}#*") + Suppress('"')
+        user_agent = Suppress('"') + Word(alphanums + "/-_.?=%&:(); ,+$@!^<>~[]'{}#*`") + Suppress('"')
 
         user_agent_or_dash = user_agent | "-"
 
