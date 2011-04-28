@@ -26,6 +26,8 @@ setup(
     version=version_str,
     packages=[
         'tamarin',
+        'tamarin.management', 'tamarin.management.commands',
+        'tamarin.migrations',
     ],
     author='Gregory Taylor',
     author_email='gtaylor@duointeractive.com',
