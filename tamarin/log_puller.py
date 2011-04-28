@@ -4,7 +4,7 @@ from tamarin.models import S3LoggedBucket, S3LogRecord
 from tamarin.parser import S3LogParser
 
 def pull_and_parse_logs():
-    purge_parsed_keys = getattr(settings, TAMARIN_PURGE_PARSED_KEYS, False)
+    purge_parsed_keys = getattr(settings, 'TAMARIN_PURGE_PARSED_KEYS', False)
     logged_buckets = S3LoggedBucket.objects.get_log_buckets_to_monitor()
     conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID,
                                settings.AWS_SECRET_ACCESS_KEY)
