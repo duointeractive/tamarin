@@ -5,7 +5,6 @@ import datetime
 from dateutil import zoneinfo
 import string
 from pyparsing import alphas, nums, alphanums, dblQuotedString, Combine, Word, Group, delimitedList, Suppress, removeQuotes
-from tamarin.models import S3LogRecord, S3LoggedBucket
 from django.conf import settings
 
 class S3LogLineParser(object):
@@ -19,14 +18,13 @@ class S3LogLineParser(object):
         """
         self.line_contents = line_contents
 
-    def parse_and_store(self):
+    def parse_line(self):
         print "-- RAW --" * 5
         print(self.line_contents)
         print "-- RESULTS --" * 5
         results = self.parse()
         self._test_print(results)
-
-        self.store(results)
+        return results
 
     def _action_dtime_parse(self, full_str, length, t):
         """
@@ -160,22 +158,6 @@ class S3LogLineParser(object):
         print "user_agent:", parsed['user_agent']
         print "version_id:", parsed['version_id']
 
-    def store(self, parsed):
-        try:
-            record = S3LogRecord.objects.get(request_id=parsed['request_id'])
-        except S3LogRecord.DoesNotExist:
-            record = S3LogRecord()
-
-        manual_fields = ['id', 'bucket']
-        fields = [field.name for field in record._meta.fields \
-                    if field.name not in manual_fields]
-        for field in fields:
-            setattr(record, field, parsed.get(field))
-
-        record.bucket = S3LoggedBucket.objects.get(name=parsed['bucket'])
-
-        record.save()
-
 class S3LogParser(object):
     """
     Handles the parsing of S3 bucket log key contents.
@@ -186,10 +168,10 @@ class S3LogParser(object):
         """
         self.log_contents = log_contents
 
-    def parse_and_store(self):
+    def parse_lines(self):
         lines = self.log_contents.split('\n')
         for line in lines:
             if not line:
                 continue
             line_parser = S3LogLineParser(line)
-            line_parser.parse_and_store()
+            yield line_parser.parse_line()

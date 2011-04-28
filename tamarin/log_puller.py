@@ -4,6 +4,22 @@ from django.conf import settings
 from tamarin.models import S3LoggedBucket, S3LogRecord
 from tamarin.parser import S3LogParser
 
+def store_parsed_entry(parsed):
+    try:
+        record = S3LogRecord.objects.get(request_id=parsed['request_id'])
+    except S3LogRecord.DoesNotExist:
+        record = S3LogRecord()
+
+    manual_fields = ['id', 'bucket']
+    fields = [field.name for field in record._meta.fields \
+                if field.name not in manual_fields]
+    for field in fields:
+        setattr(record, field, parsed.get(field))
+
+    record.bucket = S3LoggedBucket.objects.get(name=parsed['bucket'])
+
+    record.save()
+
 def pull_and_parse_logs():
     purge_parsed_keys = getattr(settings, 'TAMARIN_PURGE_PARSED_KEYS', False)
     logged_buckets = S3LoggedBucket.objects.get_log_buckets_to_monitor()
@@ -25,7 +41,8 @@ def pull_and_parse_logs():
                 continue
 
             parser = S3LogParser(log_contents)
-            parser.parse_and_store()
+            for log_entry in parser.parse_lines():
+                store_parsed_entry(log_entry)
 
             if purge_parsed_keys:
                 # Delete the key after parsing it if the
