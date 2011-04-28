@@ -1,3 +1,6 @@
+"""
+Django models for storing S3 log data. The main event is :class:`S3LogRecord`.
+"""
 from django.db import models
 
 class S3LoggedBucketManager(models.Manager):
@@ -118,6 +121,9 @@ class S3LogRecord(models.Model):
         'total_time',
         'user_agent',
     ]
+
+    def __unicode__(self):
+        return "S3LogRecord: %s" % self.id
 
     def save(self):
         """
