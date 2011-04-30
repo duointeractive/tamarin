@@ -7,4 +7,4 @@ PyParsing-based log parser). The rest are just your typical support modules
 seen in most Django apps.
 """
 # Major, minor.
-VERSION = (0, 1)
+VERSION = (1, 0)
