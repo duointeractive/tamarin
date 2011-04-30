@@ -25,6 +25,6 @@ Docstring only at this point.
 License
 -------
 
-media-nommer is licensed under the `BSD License`_.
+Tamarin is licensed under the `BSD License`_.
 
 .. _BSD License: https://github.com/duointeractive/tamarin/blob/master/LICENSE
