@@ -14,7 +14,7 @@ version_str = '%d.%d' % (tamarin.VERSION[0], tamarin.VERSION[1])
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License',
+    'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Topic :: Software Development :: Libraries :: Python Modules',
@@ -32,7 +32,7 @@ setup(
     author='Gregory Taylor',
     author_email='gtaylor@duointeractive.com',
     url='https://github.com/duointeractive/tamarin/',
-    license='MIT',
+    license='BSD',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     platforms=['any'],
