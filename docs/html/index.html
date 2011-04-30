@@ -1,0 +1,184 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tamarin: S3 access log parser/store for Django &mdash; Tamarin v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tamarin v1.0 documentation" href="#" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">Tamarin v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tamarin-s3-access-log-parser-store-for-django">
+<h1>Tamarin: S3 access log parser/store for Django<a class="headerlink" href="#tamarin-s3-access-log-parser-store-for-django" title="Permalink to this headline">¶</a></h1>
+<p>Tamarin is a drop-in <a class="reference external" href="http://djangoproject.com">Django</a> app for parsing/storing <a class="reference external" href="http://aws.amazon.com/s3/">S3</a> access logs in a
+Django model. This allows to build queries against your historic data.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Tamarin provides no analysis tools besides a model that you may
+query. Analysis is best left to other apps that use the models provided
+here.</p>
+</div>
+<div class="section" id="how-it-works">
+<h2>How it works<a class="headerlink" href="#how-it-works" title="Permalink to this headline">¶</a></h2>
+<p>Tamarin uses <a class="reference external" href="http://celeryproject.org/">celery</a> or a Django management command to list the keys in
+log buckets that you specify. The contents of the keys are downloaded
+and parsed using <a class="reference external" href="http://pyparsing.wikispaces.com/">pyparsing</a> and stored in a Django model. From there, it is
+up to you to do what you&#8217;d like with the data.</p>
+<p>No other functionality is included. It is up to you to analyze and use the
+data for your specific case. However, if you write anything cool that uses
+data from Tamarin, please open an issue on the <a class="reference external" href="https://github.com/duointeractive/tamarin/issues">issue tracker</a> and we&#8217;ll
+link you here.</p>
+</div>
+<div class="section" id="usage-cases">
+<h2>Usage cases<a class="headerlink" href="#usage-cases" title="Permalink to this headline">¶</a></h2>
+<p>Tamarin may be useful to you if you are interested in monitoring...</p>
+<ul class="simple">
+<li>Which IP addresses consume the most bandwidth.</li>
+<li>Files that are responsible for the biggest chunk of your bill.</li>
+<li>404s.</li>
+<li>Referring sites.</li>
+</ul>
+<p>You might also like Tamarin if you want to...</p>
+<ul class="simple">
+<li>Perform simple or complex analysis of your S3 access logs using Django&#8217;s ORM.</li>
+<li>Implement automatic banning of bandwidth hogs (not included in app).</li>
+<li>Create pretty charts and graphs (in another app).</li>
+<li>Set up bandwidth spike alarms.</li>
+</ul>
+</div>
+<div class="section" id="learning-more">
+<h2>Learning more<a class="headerlink" href="#learning-more" title="Permalink to this headline">¶</a></h2>
+<p><strong>Project Status:</strong> Stable</p>
+<p><strong>License:</strong> Tamarin is licensed under the <a class="reference external" href="http://opensource.org/licenses/bsd-license.php">BSD License</a>.</p>
+<p>These links may also be useful to you.</p>
+<ul class="simple">
+<li>Source repository: <a class="reference external" href="https://github.com/duointeractive/tamarin">https://github.com/duointeractive/tamarin</a></li>
+<li>Issue tracker: <a class="reference external" href="https://github.com/duointeractive/tamarin/issues">https://github.com/duointeractive/tamarin/issues</a></li>
+</ul>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#obtaining-the-package">Obtaining the package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#integration">Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#setting-up-the-log-puller">Setting up the log puller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#set-up-bucket-logging-on-s3">Set up bucket logging on S3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#add-buckets-to-monitor">Add buckets to monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#profit">Profit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#tamarin-celery-pull-parse-interval">TAMARIN_CELERY_PULL_PARSE_INTERVAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="settings.html#tamarin-purge-parsed-keys">TAMARIN_PURGE_PARSED_KEYS</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="model_reference.html">Model reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="model_reference.html#tamarin-models-s3logrecord">tamarin.models.S3LogRecord</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_reference.html#tamarin-models-s3loggedbucket">tamarin.models.S3LoggedBucket</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tamarin: S3 access log parser/store for Django</a><ul>
+<li><a class="reference internal" href="#how-it-works">How it works</a></li>
+<li><a class="reference internal" href="#usage-cases">Usage cases</a></li>
+<li><a class="reference internal" href="#learning-more">Learning more</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >next</a> |</li>
+        <li><a href="#">Tamarin v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, DUO Interactive, LLC.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

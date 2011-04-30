@@ -1,0 +1,27 @@
+.. _GitHub project: https://github.com/duointeractive/tamarin
+.. _issue tracker: https://github.com/duointeractive/tamarin/issues
+
+.. _Python: http://python.org
+.. _Boto: http://boto.cloudhackers.com/
+.. _nose: http://somethingaboutorange.com/mrl/projects/nose/
+.. _Django: http://djangoproject.com
+.. _celery: http://celeryproject.org/
+.. _pyparsing: http://pyparsing.wikispaces.com/
+.. _South: http://south.aeracode.org/
+
+.. _virtualenv: http://pypi.python.org/pypi/virtualenv
+.. _virtualenvwrapper: http://www.doughellmann.com/projects/virtualenvwrapper/
+
+.. _git: http://git-scm.com/
+
+.. _GitHub: https://github.com/
+.. _EC2: http://aws.amazon.com/ec2/
+.. _S3: http://aws.amazon.com/s3/
+.. _SQS: http://aws.amazon.com/sqs/
+.. _SimpleDB: http://aws.amazon.com/simpledb/
+.. _CloudFront: http://aws.amazon.com/cloudfront/
+.. _Amazon AWS: http://aws.amazon.com/
+.. _AWS: http://aws.amazon.com/
+
+.. _DUO Interactive: http://duointeractive.com
+.. _BSD License: http://opensource.org/licenses/bsd-license.php
