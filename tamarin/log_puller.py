@@ -49,7 +49,7 @@ def pull_and_parse_logs():
     parser, then stores the values in S3LogRecord objects.
     """
     # When True, delete S3 log keys after they have been parsed.
-    purge_parsed_keys = getattr(settings, 'TAMARIN_PURGE_PARSED_KEYS', False)
+    purge_parsed_keys = getattr(settings, 'TAMARIN_PURGE_PARSED_KEYS', True)
     # All buckets with monitor_bucket == True (active).
     logged_buckets = S3LoggedBucket.objects.get_log_buckets_to_monitor()
     conn = boto.connect_s3(settings.AWS_ACCESS_KEY_ID,
