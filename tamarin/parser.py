@@ -142,7 +142,7 @@ class S3LogLineParser(object):
                      Word(alphanums + "/-_.?=%&:(); ,+$@!^<>~[]'{}#*`") + \
                      Suppress('"')
         # User agent field can either be a user agent string or a dash.
-        user_agent_or_dash = user_agent | "-"
+        user_agent_or_dash = user_agent | "-" | empty_dquotes
 
         # The string value for each field below is what you refer to when
         # accessing the parsed values.
