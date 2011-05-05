@@ -1,0 +1,12 @@
+Changes
+=======
+
+1.1
+---
+* Allow blank double-quoted User-Agent strings. This is exceedingly rare so far,
+  but it does look like it happens once in a blue moon.
+* Add this CHANGES file.
+
+1.0
+----
+* Initial release.
