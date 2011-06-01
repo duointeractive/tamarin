@@ -1,6 +1,12 @@
 Changes
 =======
 
+1.2
+---
+* If we run across a log entry that we can't parse, simply log as an error
+  and continue to the next line instead of stopping and failing. The parser is
+  good enough now that I don't have mis-givings about doing this now.
+
 1.1
 ---
 * Allow blank double-quoted User-Agent strings. This is exceedingly rare so far,
