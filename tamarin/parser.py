@@ -8,7 +8,7 @@ The primary user of this module is the `log_puller` module.
 import logging
 import datetime
 from dateutil import zoneinfo
-from pyparsing import alphas, nums, alphanums, Combine, Word, Group, delimitedList, Suppress
+from pyparsing import alphas, nums, alphanums, Combine, Word, Group, delimitedList, Suppress, ParseException
 from django.conf import settings
 
 LOGGER = logging.getLogger(__name__)
@@ -208,5 +208,12 @@ class S3LogParser(object):
                 continue
             # Delegate to the line parser.
             line_parser = S3LogLineParser(line)
-            # Return the pyparsing.ParseResults for the line.
-            yield line_parser.parse_line()
+
+            try:
+                # Return the pyparsing.ParseResults for the line.
+                yield line_parser.parse_line()
+            except ParseException, exc:
+                LOGGER.error("Unable to parse the following line:")
+                LOGGER.error(line)
+                LOGGER.error(exc)
+                continue
